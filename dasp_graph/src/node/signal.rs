@@ -2,7 +2,7 @@ use crate::{Buffer, Input, Node};
 use dasp_frame::Frame;
 use dasp_signal::Signal;
 
-impl<F> Node for dyn Signal<Frame = F>
+impl<F> Node for dyn Signal<Frame = F> + Send
 where
     F: Frame<Sample = f32>,
 {
