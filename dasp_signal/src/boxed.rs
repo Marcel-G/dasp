@@ -1,7 +1,9 @@
+use crate::Signal;
+
 #[cfg(not(feature = "std"))]
-type Box<T> = alloc::boxed::Box<T>;
+pub type Box<T> = alloc::boxed::Box<T>;
 #[cfg(feature = "std")]
-type Box<T> = std::boxed::Box<T>;
+pub type Box<T> = std::boxed::Box<T>;
 
 impl<S> Signal for Box<S>
 where
