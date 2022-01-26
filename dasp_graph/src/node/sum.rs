@@ -3,7 +3,7 @@ use crate::{Buffer, Input, Node};
 /// A stateless node that sums each of the inputs onto the output.
 ///
 /// Assumes that the number of buffers per input is equal to the number of output buffers.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Default, Clone, Debug, PartialEq)]
 pub struct Sum;
 
 /// A stateless node that sums all of the buffers of all of the inputs onto each of the output
@@ -23,6 +23,7 @@ pub struct Sum;
 pub struct SumBuffers;
 
 impl Node for Sum {
+    type InputType = ();
     fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
         // Fill the output with silence.
         for out_buffer in output.iter_mut() {
@@ -41,6 +42,7 @@ impl Node for Sum {
 }
 
 impl Node for SumBuffers {
+    type InputType = ();
     fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
         // Get the first output buffer.
         let mut out_buffers = output.iter_mut();

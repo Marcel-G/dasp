@@ -2,7 +2,7 @@
 
 use dasp_graph::{node, Buffer, Input, Node, NodeData};
 
-type BoxedNode = dasp_graph::BoxedNode;
+type BoxedNode = dasp_graph::BoxedNode<()>;
 
 // A simple source node that just writes `0.1` to the output. We'll use this to test the sum node.
 fn src_node(_inputs: &[Input], output: &mut [Buffer]) {
@@ -97,6 +97,7 @@ fn test_sum_unboxed() {
     }
 
     impl Node for TestNode {
+        type InputType = ();
         fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
             match *self {
                 TestNode::SourceFnPtr(ref mut f) => (*f)(inputs, output),

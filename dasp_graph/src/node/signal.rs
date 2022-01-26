@@ -6,6 +6,7 @@ impl<F> Node for dyn Signal<Frame = F> + Send
 where
     F: Frame<Sample = f32>,
 {
+    type InputType = ();
     fn process(&mut self, _inputs: &[Input], output: &mut [Buffer]) {
         let channels = std::cmp::min(F::CHANNELS, output.len());
         for ix in 0..Buffer::LEN {
