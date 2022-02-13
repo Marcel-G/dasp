@@ -160,7 +160,6 @@ pub mod node;
 /// type Processor = dasp_graph::Processor<Graph>;
 /// #
 /// # impl Node for MyNode {
-/// #    type InputType = ();
 /// #    fn process(&mut self, _inputs: &[Input], _output: &mut [Buffer]) {
 /// #    }
 /// # }
@@ -244,7 +243,7 @@ where
     where
         G: Data<NodeWeight = NodeData<T>> + DataMapMut,
         for<'a> &'a G: GraphBase<NodeId = G::NodeId, EdgeId = G::EdgeId> + IntoEdgesDirected,
-        T: Node<InputType = G::EdgeWeight>,
+        T: Node<G::EdgeWeight>,
         G::EdgeWeight: Clone,
     {
         process(self, graph, node)
@@ -273,7 +272,7 @@ impl<I> NodeData<BoxedNode<I>> {
     /// The same as **new**, but boxes the given node data before storing it.
     pub fn boxed<T>(node: T, buffers: Vec<Buffer>) -> Self
     where
-        T: 'static + Node<InputType = I>,
+        T: 'static + Node<I>,
     {
         NodeData::new(BoxedNode(Box::new(node)), buffers)
     }
@@ -281,7 +280,7 @@ impl<I> NodeData<BoxedNode<I>> {
     /// The same as **new1**, but boxes the given node data before storing it.
     pub fn boxed1<T>(node: T) -> Self
     where
-        T: 'static + Node<InputType = I>,
+        T: 'static + Node<I>,
     {
         Self::boxed(node, vec![Buffer::SILENT])
     }
@@ -289,7 +288,7 @@ impl<I> NodeData<BoxedNode<I>> {
     /// The same as **new2**, but boxes the given node data before storing it.
     pub fn boxed2<T>(node: T) -> Self
     where
-        T: 'static + Node<InputType = I>,
+        T: 'static + Node<I>,
     {
         Self::boxed(node, vec![Buffer::SILENT, Buffer::SILENT])
     }
@@ -315,7 +314,7 @@ pub fn process<G, T>(processor: &mut Processor<G>, graph: &mut G, node: G::NodeI
 where
     G: Data<NodeWeight = NodeData<T>> + DataMapMut + Visitable,
     for<'a> &'a G: GraphBase<NodeId = G::NodeId, EdgeId = G::EdgeId> + IntoEdgesDirected,
-    T: Node<InputType = G::EdgeWeight>,
+    T: Node<G::EdgeWeight>,
     G::EdgeWeight: Clone,
 {
     const NO_NODE: &str = "no node exists for the given index";

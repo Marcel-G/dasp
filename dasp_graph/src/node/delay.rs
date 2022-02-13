@@ -13,7 +13,6 @@ impl<S> Node for Delay<S>
 where
     S: ring_buffer::SliceMut<Element = f32>,
 {
-    type InputType = ();
     fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
         // Retrieve the single input, ignore any others.
         let input = match inputs.get(0) {

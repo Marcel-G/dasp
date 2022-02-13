@@ -18,15 +18,14 @@ where
     pub node_type: PhantomData<T>,
 }
 
-impl<G, T> Node for GraphNode<G, T>
+impl<G, T, I> Node<I> for GraphNode<G, T>
 where
-    G: Data<NodeWeight = NodeData<T>> + DataMapMut + Visitable,
+    G: Data<NodeWeight = NodeData<T>, EdgeWeight = I> + DataMapMut + Visitable,
     for<'a> &'a G: GraphBase<NodeId = G::NodeId, EdgeId = G::EdgeId> + IntoEdgesDirected,
-    T: Node<InputType = G::EdgeWeight>,
-    G::EdgeWeight: Clone,
+    T: Node<I>,
+    I: Clone
 {
-    type InputType = G::EdgeWeight;
-    fn process(&mut self, inputs: &[Input<Self::InputType>], output: &mut [Buffer]) {
+    fn process(&mut self, inputs: &[Input<I>], output: &mut [Buffer]) {
         let GraphNode {
             ref mut processor,
             ref mut graph,

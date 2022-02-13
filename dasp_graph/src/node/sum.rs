@@ -23,7 +23,6 @@ pub struct Sum;
 pub struct SumBuffers;
 
 impl Node for Sum {
-    type InputType = ();
     fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
         // Fill the output with silence.
         for out_buffer in output.iter_mut() {
@@ -42,7 +41,6 @@ impl Node for Sum {
 }
 
 impl Node for SumBuffers {
-    type InputType = ();
     fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
         // Get the first output buffer.
         let mut out_buffers = output.iter_mut();

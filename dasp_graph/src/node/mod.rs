@@ -51,7 +51,6 @@ mod sum;
 /// // Implement the `Node` trait for our new type.
 /// #[cfg(feature = "dasp_slice")]
 /// impl Node for Sum {
-///     type InputType = ();
 ///     fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
 ///         // Fill the output with silence.
 ///         for out_buffer in output.iter_mut() {
@@ -69,8 +68,7 @@ mod sum;
 ///     }
 /// }
 /// ```
-pub trait Node {
-    type InputType;
+pub trait Node<I = ()> {
     /// Process some audio given a list of the node's `inputs` and write the result to the `output`
     /// buffers.
     ///
@@ -84,7 +82,7 @@ pub trait Node {
     ///
     /// This `process` method is called by the [`Processor`](../struct.Processor.html) as it
     /// traverses the graph during audio rendering.
-    fn process(&mut self, inputs: &[Input<Self::InputType>], output: &mut [Buffer]);
+    fn process(&mut self, inputs: &[Input<I>], output: &mut [Buffer]);
 }
 
 /// A reference to another node that is an input to the current node.
@@ -126,43 +124,38 @@ impl fmt::Debug for Input {
     }
 }
 
-impl<'a, T> Node for &'a mut T
+impl<'a, T, I> Node<I> for &'a mut T
 where
-    T: Node + ?Sized,
+    T: Node<I> + ?Sized,
 {
-    type InputType = T::InputType;
-    fn process(&mut self, inputs: &[Input<Self::InputType>], output: &mut [Buffer]) {
+    fn process(&mut self, inputs: &[Input<I>], output: &mut [Buffer]) {
         (**self).process(inputs, output)
     }
 }
 
-impl<T> Node for Box<T>
+impl<T, I> Node<I> for Box<T>
 where
-    T: Node + ?Sized,
+    T: Node<I> + ?Sized,
 {
-    type InputType = T::InputType;
-    fn process(&mut self, inputs: &[Input<Self::InputType>], output: &mut [Buffer]) {
+    fn process(&mut self, inputs: &[Input<I>], output: &mut [Buffer]) {
         (**self).process(inputs, output)
     }
 }
 
-impl Node for dyn Fn(&[Input], &mut [Buffer]) {
-    type InputType = ();
-    fn process(&mut self, inputs: &[Input<Self::InputType>], output: &mut [Buffer]) {
+impl<I> Node<I> for dyn Fn(&[Input<I>], &mut [Buffer]) {
+    fn process(&mut self, inputs: &[Input<I>], output: &mut [Buffer]) {
         (*self)(inputs, output)
     }
 }
 
-impl Node for dyn FnMut(&[Input], &mut [Buffer]) {
-    type InputType = ();
-    fn process(&mut self, inputs: &[Input<Self::InputType>], output: &mut [Buffer]) {
+impl<I> Node<I> for dyn FnMut(&[Input<I>], &mut [Buffer]) {
+    fn process(&mut self, inputs: &[Input<I>], output: &mut [Buffer]) {
         (*self)(inputs, output)
     }
 }
 
-impl Node for fn(&[Input], &mut [Buffer]) {
-    type InputType = ();
-    fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
+impl<I> Node<I> for fn(&[Input<I>], &mut [Buffer]) {
+    fn process(&mut self, inputs: &[Input<I>], output: &mut [Buffer]) {
         (*self)(inputs, output)
     }
 }

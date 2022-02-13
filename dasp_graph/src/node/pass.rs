@@ -11,8 +11,7 @@ use crate::{Buffer, Input, Node};
 pub struct Pass;
 
 impl Node for Pass {
-    type InputType = ();
-    fn process(&mut self, inputs: &[Input<Self::InputType>], output: &mut [Buffer]) {
+    fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
         let input = match inputs.get(0) {
             None => return,
             Some(input) => input,

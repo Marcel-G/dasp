@@ -97,7 +97,6 @@ fn test_sum_unboxed() {
     }
 
     impl Node for TestNode {
-        type InputType = ();
         fn process(&mut self, inputs: &[Input], output: &mut [Buffer]) {
             match *self {
                 TestNode::SourceFnPtr(ref mut f) => (*f)(inputs, output),
